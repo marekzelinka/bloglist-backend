@@ -20,9 +20,26 @@ test('blogs are returned as json', async () => {
 test('unique identifier property of the blog posts is named id', async () => {
   const getRes = await api.get('/api/blogs')
   const noteToView = getRes.body[0]
-  console.log(noteToView)
   expect(noteToView.id).toBeDefined()
   expect(noteToView._id).not.toBeDefined()
+})
+
+test('a valid blog can be added', async () => {
+  const validBlog = {
+    title: 'TDD harms architecture',
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
+    likes: 0,
+  }
+
+  const postRes = await api.post('/api/blogs').send(validBlog)
+  expect(postRes.statusCode).toBe(201)
+  expect(postRes.get('Content-Type')).toMatch(/application\/json/)
+
+  const blogsAtEnd = await testHelper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(testHelper.initialBlogs.length + 1)
+  const authors = blogsAtEnd.map((blog) => blog.author)
+  expect(authors).toContain(validBlog.author)
 })
 
 afterAll(() => mongoose.connection.close())
