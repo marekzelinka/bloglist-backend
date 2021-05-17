@@ -1,5 +1,8 @@
 const listHelper = {
-  dummy: (blogs) => 1,
+  dummy: (blogs) => {
+    blogs
+    return 1
+  },
   totalLikes: (blogs) =>
     blogs.length > 0
       ? blogs.reduce((totalLikes, blog) => totalLikes + blog.likes, 0)
