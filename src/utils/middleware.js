@@ -1,16 +1,18 @@
+const logger = require('./logger')
+
 const middleware = {
   reqLogger: (req, _res, next) => {
-    console.log('Method:', req.method)
-    console.log('Path:', req.path)
-    console.log('Body:', req.body)
-    console.log('---')
+    logger.info('Method:', req.method)
+    logger.info('Path:', req.path)
+    logger.info('Body:', req.body)
+    logger.info('---')
     next()
   },
   unknowEndpoint: (_req, res) => {
     res.status(404).json({ error: 'unknown endpoint' })
   },
   errorHandler: (error, _req, res, next) => {
-    console.error(error.message)
+    logger.error(error.message)
 
     if (error.name === 'CastError') {
       res.status(400).json({ error: 'malformatted id' })
