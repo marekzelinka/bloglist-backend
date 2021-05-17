@@ -6,6 +6,9 @@ const logger = {
     console.log(...params)
   },
   error: (...params) => {
+    if (process.env.NODE_ENV === 'test') {
+      return
+    }
     console.error(...params)
   },
 }

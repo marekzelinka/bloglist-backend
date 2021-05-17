@@ -58,4 +58,16 @@ test('if the likes property is missing, default to 0', async () => {
   expect(newBlog.likes).toBe(0)
 })
 
+test('blog without title and url is not added', async () => {
+  const invalidBlog = {
+    author: 'Robert C. Martin',
+  }
+
+  const postRes = await api.post('/api/blogs').send(invalidBlog)
+  expect(postRes.statusCode).toBe(400)
+
+  const blogsAtEnd = await testHelper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(testHelper.initialBlogs.length)
+})
+
 afterAll(() => mongoose.connection.close())
