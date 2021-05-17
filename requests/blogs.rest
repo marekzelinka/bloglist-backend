@@ -1,0 +1,12 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "The Veil of Ignorance",
+  "author": "Adam Morse",
+  "url": "https://mrmrs.cc/writing/the-veil-of-ignorance/",
+  "likes": 0
+}
+
+###
+GET http://localhost:3003/api/blogs
