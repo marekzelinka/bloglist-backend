@@ -42,4 +42,20 @@ test('a valid blog can be added', async () => {
   expect(authors).toContain(validBlog.author)
 })
 
+test('if the likes property is missing, default to 0', async () => {
+  const validBlog = {
+    title: 'TDD harms architecture',
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
+  }
+
+  const postRes = await api.post('/api/blogs').send(validBlog)
+  expect(postRes.statusCode).toBe(201)
+
+  const blogsAtEnd = await testHelper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(testHelper.initialBlogs.length + 1)
+  const newBlog = blogsAtEnd.find((blog) => blog.author === validBlog.author)
+  expect(newBlog.likes).toBe(0)
+})
+
 afterAll(() => mongoose.connection.close())
