@@ -2,9 +2,9 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-  "title": "The Veil of Ignorance",
+  "title": "https://mrmrs.cc/writing/design-reading",
   "author": "Adam Morse",
-  "url": "https://mrmrs.cc/writing/the-veil-of-ignorance/",
+  "url": "https://mrmrs.cc/writing/design-reading",
   "likes": 0
 }
 
