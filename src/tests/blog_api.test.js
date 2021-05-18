@@ -38,6 +38,7 @@ test('a valid blog can be added', async () => {
 
   const blogsAtEnd = await testHelper.blogsInDb()
   expect(blogsAtEnd).toHaveLength(testHelper.initialBlogs.length + 1)
+
   const authors = blogsAtEnd.map((blog) => blog.author)
   expect(authors).toContain(validBlog.author)
 })
@@ -54,6 +55,7 @@ test('if the likes property is missing, default to 0', async () => {
 
   const blogsAtEnd = await testHelper.blogsInDb()
   expect(blogsAtEnd).toHaveLength(testHelper.initialBlogs.length + 1)
+
   const newBlog = blogsAtEnd.find((blog) => blog.author === validBlog.author)
   expect(newBlog.likes).toBe(0)
 })
@@ -68,6 +70,20 @@ test('blog without title and url is not added', async () => {
 
   const blogsAtEnd = await testHelper.blogsInDb()
   expect(blogsAtEnd).toHaveLength(testHelper.initialBlogs.length)
+})
+
+test('deletion succeeds with statusCode 204 if id is valid', async () => {
+  const blogsAtStart = await testHelper.blogsInDb()
+  const blogToDelete = blogsAtStart[0]
+
+  const deleteRes = await api.delete(`/api/blogs/${blogToDelete.id}`)
+  expect(deleteRes.statusCode).toBe(204)
+
+  const blogsAtEnd = await testHelper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(testHelper.initialBlogs.length - 1)
+
+  const urls = blogsAtEnd.map((blog) => blog.url)
+  expect(urls).not.toContain(blogToDelete.url)
 })
 
 afterAll(() => mongoose.connection.close())
