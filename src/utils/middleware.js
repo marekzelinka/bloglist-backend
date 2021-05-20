@@ -11,7 +11,7 @@ const middleware = {
   unknowEndpoint: (_req, res) => {
     res.status(404).json({ error: 'unknown endpoint' })
   },
-  addTokenToReq: (req, _res, next) => {
+  tokenExtractor: (req, _res, next) => {
     const authorization = req.get('authorization')
     if (authorization === undefined) {
       next()
