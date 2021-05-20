@@ -11,7 +11,28 @@ const api = supertest(app)
 describe('with there are initially some blogs saved', () => {
   beforeEach(async () => {
     await Blog.deleteMany()
-    await Blog.insertMany(testHelper.initialBlogs)
+    await User.deleteMany()
+
+    const saltRounds = 10
+    const passwordHash = await bcrypt.hash(
+      testHelper.initialUser.password,
+      saltRounds
+    )
+    const user = new User({
+      username: testHelper.initialUser.username,
+      passwordHash,
+    })
+    const savedUser = await user.save()
+
+    for (const newBlog of testHelper.initialBlogs) {
+      const blog = new Blog({
+        ...newBlog,
+        user: savedUser._id,
+      })
+      const savedBlog = await blog.save()
+      user.blogs = user.blogs.concat(savedBlog._id)
+      await user.save()
+    }
   })
 
   test('blogs are returned as json', async () => {
@@ -36,7 +57,11 @@ describe('with there are initially some blogs saved', () => {
         likes: 0,
       }
 
-      const postRes = await api.post('/api/blogs').send(validBlog)
+      const token = await testHelper.authToken(api)
+      const postRes = await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
+        .send(validBlog)
       expect(postRes.statusCode).toBe(201)
       expect(postRes.get('Content-Type')).toMatch(/application\/json/)
 
@@ -52,7 +77,12 @@ describe('with there are initially some blogs saved', () => {
         author: 'Robert C. Martin',
       }
 
-      const postRes = await api.post('/api/blogs').send(invalidBlog)
+      const token = await testHelper.authToken(api)
+
+      const postRes = await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
+        .send(invalidBlog)
       expect(postRes.statusCode).toBe(400)
 
       const blogsAtEnd = await testHelper.blogsInDb()
@@ -66,7 +96,12 @@ describe('with there are initially some blogs saved', () => {
         url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
       }
 
-      const postRes = await api.post('/api/blogs').send(validBlog)
+      const token = await testHelper.authToken(api)
+
+      const postRes = await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
+        .send(validBlog)
       expect(postRes.statusCode).toBe(201)
 
       const blogsAtEnd = await testHelper.blogsInDb()
@@ -84,7 +119,11 @@ describe('with there are initially some blogs saved', () => {
       const blogsAtStart = await testHelper.blogsInDb()
       const blogToDelete = blogsAtStart[0]
 
-      const deleteRes = await api.delete(`/api/blogs/${blogToDelete.id}`)
+      const token = await testHelper.authToken(api)
+
+      const deleteRes = await api
+        .delete(`/api/blogs/${blogToDelete.id}`)
+        .set('Authorization', `Bearer ${token}`)
       expect(deleteRes.statusCode).toBe(204)
 
       const blogsAtEnd = await testHelper.blogsInDb()
@@ -115,20 +154,6 @@ describe('with there are initially some blogs saved', () => {
   })
 
   describe('when there are initially some user saved', () => {
-    beforeEach(async () => {
-      await User.deleteMany()
-
-      const saltRounds = 10
-      const passwordHash = await bcrypt.hash('sekret', saltRounds)
-      const user = new User({
-        username: 'randomusername',
-        passwordHash,
-      })
-      await user.save()
-
-      await Blog.insertMany(testHelper.initialBlogs)
-    })
-
     describe('addition of a new user', () => {
       test('fails with statusCode 400 if data is invalid', async () => {
         const usersAtStart = await testHelper.usersInDb()

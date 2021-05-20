@@ -24,6 +24,17 @@ const testHelper = {
     const users = await User.find()
     return users.map((user) => user.toJSON())
   },
+  authToken: async (api) => {
+    const loginCredentials = {
+      username: 'root',
+      password: 'sekret',
+    }
+    const loginPostRes = await api.post('/api/login').send(loginCredentials)
+    const token = loginPostRes.body.token
+
+    return token
+  },
+  initialUser: { username: 'root', password: 'sekret' },
 }
 
 module.exports = testHelper

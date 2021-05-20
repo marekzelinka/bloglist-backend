@@ -43,8 +43,8 @@ const middleware = {
     }
 
     const user = await User.findById(decodedToken.id)
-    console.log('user', user)
     req.user = user
+
     next()
   },
   errorHandler: (error, _req, res, next) => {
