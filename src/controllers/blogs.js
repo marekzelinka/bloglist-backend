@@ -1,26 +1,13 @@
 const express = require('express')
-const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
-const config = require('../utils/config')
+const middleware = require('../utils/middleware')
 
 const blogsRouter = express.Router()
 
-blogsRouter.post('/', async (req, res) => {
+blogsRouter.post('/', middleware.userExtractor, async (req, res) => {
   const body = req.body
-  const token = req.token
-  if (token === undefined) {
-    res.status(401).json({ error: 'token missing' })
-    return
-  }
-
-  const decodedToken = jwt.verify(token, config.SECRET)
-  if (decodedToken.id === undefined) {
-    res.status(401).json({ error: 'invalid token' })
-    return
-  }
-
-  const user = await User.findById(decodedToken.id)
+  const user = await User.findById(req.user._id)
 
   const blog = new Blog({
     title: body.title,
@@ -30,10 +17,10 @@ blogsRouter.post('/', async (req, res) => {
     user: user.id,
   })
 
-  user.blogs = user.blogs.concat(blog._id)
+  const savedBlog = await blog.save()
+  user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
 
-  const savedBlog = await blog.save()
   res.status(201).json(savedBlog)
 })
 
@@ -59,22 +46,14 @@ blogsRouter.put('/:id', async (req, res) => {
   res.json(updatedBlog)
 })
 
-blogsRouter.delete('/:id', async (req, res) => {
-  const token = req.token
-  if (token === undefined) {
-    res.status(401).json({ error: 'token missing' })
-    return
-  }
-
-  const decodedToken = jwt.verify(token, config.SECRET)
-  if (decodedToken.id === undefined) {
-    res.status(401).json({ error: 'invalid token' })
-    return
-  }
-
+blogsRouter.delete('/:id', middleware.userExtractor, async (req, res) => {
   const blog = await Blog.findById(req.params.id)
+  if (blog === null) {
+    res.status(204).end()
+    return
+  }
 
-  if (blog.user.toString() !== decodedToken.id) {
+  if (blog.user.toString() !== req.user._id.toString()) {
     res.status(401).json({ error: 'invalid owner' })
     return
   }

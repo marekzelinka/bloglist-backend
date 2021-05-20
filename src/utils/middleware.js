@@ -1,4 +1,7 @@
+const jwt = require('jsonwebtoken')
+const User = require('../models/user')
 const logger = require('./logger')
+const config = require('./config')
 
 const middleware = {
   reqLogger: (req, _res, next) => {
@@ -24,6 +27,24 @@ const middleware = {
     const token = authorization.substring(7)
     req.token = token
 
+    next()
+  },
+  userExtractor: async (req, res, next) => {
+    const token = req.token
+    if (token === undefined) {
+      res.status(401).json({ error: 'token missing' })
+      return
+    }
+
+    const decodedToken = jwt.verify(token, config.SECRET)
+    if (decodedToken.id === undefined) {
+      res.status(401).json({ error: 'invalid token' })
+      return
+    }
+
+    const user = await User.findById(decodedToken.id)
+    console.log('user', user)
+    req.user = user
     next()
   },
   errorHandler: (error, _req, res, next) => {
