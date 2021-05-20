@@ -38,7 +38,7 @@ blogsRouter.post('/', async (req, res) => {
 })
 
 blogsRouter.get('/', async (_req, res) => {
-  const blogs = await Blog.find().populate('user')
+  const blogs = await Blog.find().populate('user', { username: 1, name: 1 })
   res.json(blogs)
 })
 
@@ -60,7 +60,26 @@ blogsRouter.put('/:id', async (req, res) => {
 })
 
 blogsRouter.delete('/:id', async (req, res) => {
-  await Blog.findByIdAndDelete(req.params.id)
+  const token = req.token
+  if (token === undefined) {
+    res.status(401).json({ error: 'token missing' })
+    return
+  }
+
+  const decodedToken = jwt.verify(token, config.SECRET)
+  if (decodedToken.id === undefined) {
+    res.status(401).json({ error: 'invalid token' })
+    return
+  }
+
+  const blog = await Blog.findById(req.params.id)
+
+  if (blog.user.toString() !== decodedToken.id) {
+    res.status(401).json({ error: 'invalid owner' })
+    return
+  }
+
+  await blog.delete()
   res.status(204).end()
 })
 
