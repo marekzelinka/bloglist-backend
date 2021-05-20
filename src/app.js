@@ -10,9 +10,12 @@ const usersRouter = require('./controllers/users')
 
 const app = express()
 
-logger.info('connecting to database', config.MONGODB_URI)
+const uri =
+  process.env.NODE_ENV !== 'test' ? config.MONGODB_URI : config.TEST_MONGODB_URI
+
+logger.info('connecting to database', uri)
 mongoose
-  .connect(config.MONGODB_URI, {
+  .connect(uri, {
     useCreateIndex: true,
     useFindAndModify: true,
     useNewUrlParser: true,

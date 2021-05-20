@@ -12,7 +12,4 @@ for (const [key, value] of Object.entries(config)) {
   }
 }
 
-config.MONGODB_URI =
-  process.env.NODE_ENV !== 'test' ? config.MONGODB_URI : config.TEST_MONGODB_URI
-
 module.exports = config

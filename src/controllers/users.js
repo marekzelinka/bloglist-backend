@@ -7,6 +7,16 @@ const usersRouter = express.Router()
 usersRouter.post('/', async (req, res) => {
   const body = req.body
 
+  if (body.password === undefined) {
+    res.status(400).json({ error: 'password must be given' })
+    return
+  } else if (body.password.trim().length < 3) {
+    res
+      .status(400)
+      .json({ error: 'password must be at least 3 characters long' })
+    return
+  }
+
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(body.password, saltRounds)
 
