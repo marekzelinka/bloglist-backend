@@ -13,5 +13,17 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hc
 GET http://localhost:3003/api/blogs
 
 ###
+PUT http://localhost:3003/api/blogs/60a7768784b037243c1446ae
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmVrIiwiaWQiOiI2MGE2Mjg2ZThlYmQ0ZjMyNWM4ODMwNGIiLCJpYXQiOjE2MjE2MTI1MDh9.S8BE88bmpdPGNGJ930BHk7F2WWBTJHxU2lj9F8DzDB0
+
+{
+  "title": "Design Reading",
+  "author": "Adam Morse",
+  "url": "https://mrmrs.cc/writing/design-reading",
+  "likes": 2
+}
+
+###
 DELETE http://localhost:3003/api/blogs/60a369fd9aa9531eacb8f867
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmVrIiwiaWQiOiI2MGE2Mjg2ZThlYmQ0ZjMyNWM4ODMwNGIiLCJpYXQiOjE2MjE1MDc1MjN9.AnfbADZalnlZGgQlZpvKETcBap2IuO6u1KYHEYhOZpM
