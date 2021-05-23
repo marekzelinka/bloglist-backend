@@ -3,7 +3,6 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 require('express-async-errors')
 const config = require('./utils/config')
-const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
 const blogsRouter = require('./controllers/blogs')
 const usersRouter = require('./controllers/users')
@@ -14,7 +13,7 @@ const app = express()
 const uri =
   process.env.NODE_ENV !== 'test' ? config.MONGODB_URI : config.TEST_MONGODB_URI
 
-logger.info('connecting to database', uri)
+console.log('connecting to database', uri)
 mongoose
   .connect(uri, {
     useCreateIndex: true,
@@ -22,9 +21,9 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => logger.info('connected to database'))
+  .then(() => console.log('connected to database'))
   .catch((error) =>
-    logger.error('error connecting to database:', error.message)
+    console.error('error connecting to database:', error.message)
   )
 
 app.use(cors())
@@ -34,6 +33,11 @@ app.use(middleware.reqLogger)
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
+if (process.env.NODE_ENV === 'test') {
+  const testingRouter = require('./controllers/testing')
+  app.use('/api/testing', testingRouter)
+}
+
 app.use(middleware.unknowEndpoint)
 app.use(middleware.errorHandler)
 
