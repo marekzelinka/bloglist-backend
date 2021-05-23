@@ -4,7 +4,7 @@ const User = require('../models/user')
 
 const testingRouter = express.Router()
 
-testingRouter.post('/', async (_req, res) => {
+testingRouter.post('/reset', async (_req, res) => {
   await Blog.deleteMany()
   await User.deleteMany()
 
