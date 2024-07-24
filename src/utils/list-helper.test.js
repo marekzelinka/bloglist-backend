@@ -98,7 +98,7 @@ describe('favoriteBlog', () => {
 
   test('of empty array, return null', () => {
     const actual = favoriteBlog([])
-    assert.equal(actual, null)
+    assert.strictEqual(actual, null)
   })
 })
 
@@ -164,7 +164,7 @@ describe('moostBlogs', () => {
 
   test('of empty array, return null', () => {
     const actual = mostBlogs([])
-    assert.equal(actual, null)
+    assert.strictEqual(actual, null)
   })
 })
 
@@ -230,6 +230,6 @@ describe('mostLikes ', () => {
 
   test('of empty array, return null', () => {
     const actual = mostLikes([])
-    assert.equal(actual, null)
+    assert.strictEqual(actual, null)
   })
 })
