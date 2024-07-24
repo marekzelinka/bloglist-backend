@@ -1,14 +1,13 @@
 import assert from 'node:assert'
 import { describe, test } from 'node:test'
-import { dummy } from '../utils/list-helper.js'
-import { totalLikes } from './list-helper.js'
+import { dummy, favoriteBlog, totalLikes } from './list-helper.js'
 
 describe('dummy', () => {
   test('dummy returns one', () => {
     const blogs = []
 
-    const result = dummy(blogs)
-    assert.strictEqual(result, 1)
+    const actual = dummy(blogs)
+    assert.strictEqual(actual, 1)
   })
 })
 
@@ -23,6 +22,14 @@ describe('totalLikes', () => {
       __v: 0,
     },
   ]
+
+  test('when list has only one blog, equals the likes of that', () => {
+    const actual = totalLikes(listWithOneBlog)
+    assert.strictEqual(actual, 5)
+  })
+})
+
+describe('favoriteBlog', () => {
   const blogs = [
     {
       _id: '5a422a851b54a676234d17f7',
@@ -74,8 +81,17 @@ describe('totalLikes', () => {
     },
   ]
 
-  test('when list has only one blog, equals the likes of that', () => {
-    const result = totalLikes(listWithOneBlog)
-    assert.strictEqual(result, 5)
+  test('of many blogs, returns one with most likes', () => {
+    const actual = favoriteBlog(blogs)
+    assert.deepStrictEqual(actual, {
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
+      likes: 12,
+    })
+  })
+
+  test('of empty array, return null', () => {
+    const actual = favoriteBlog([blogs])
+    assert.equal(actual, null)
   })
 })
