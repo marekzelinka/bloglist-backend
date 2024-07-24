@@ -91,7 +91,7 @@ describe('favoriteBlog', () => {
   })
 
   test('of empty array, return null', () => {
-    const actual = favoriteBlog([blogs])
+    const actual = favoriteBlog([])
     assert.equal(actual, null)
   })
 })
@@ -154,5 +154,10 @@ describe('moostBlogs', () => {
       author: 'Robert C. Martin',
       blogs: 3,
     })
+  })
+
+  test('of empty array, return null', () => {
+    const actual = mostBlogs([])
+    assert.equal(actual, null)
   })
 })
