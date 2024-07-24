@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export function dummy(_blogs) {
   return 1
 }
@@ -18,4 +20,14 @@ export function favoriteBlog(blogs) {
     author: favorite.author,
     likes: favorite.likes,
   }
+}
+
+export function mostBlogs(blogs) {
+  const countedByBlogCount = _.countBy(blogs, (blog) => blog.author)
+  const [author, blogCount] = _.maxBy(
+    _.toPairs(countedByBlogCount),
+    ([, count]) => count,
+  )
+
+  return { author, blogs: blogCount }
 }
