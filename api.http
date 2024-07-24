@@ -1,0 +1,12 @@
+GET http://localhost:3000/api/blogs
+
+###
+POST http://localhost:3000/api/blogs
+Content-Type: application/json
+
+{
+  "title": "The Veil of Ignorance",
+  "author": "Adam Moorse",
+  "url": "https://medium.com/@mrmrs_/the-veil-of-ignorance-575f6a53a575",
+  "likes": 0
+}
