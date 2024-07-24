@@ -1,5 +1,3 @@
-import _ from 'lodash'
-
 export function dummy(_blogs) {
   return 1
 }
@@ -29,11 +27,37 @@ export function mostBlogs(blogs) {
     return null
   }
 
-  const countedByBlogCount = _.countBy(blogs, (blog) => blog.author)
-  const [author, blogsCount] = _.maxBy(
-    _.toPairs(countedByBlogCount),
-    ([, count]) => count,
+  const authorCounts = blogs.reduce((authorCount, blog) => {
+    authorCount[blog.author] = (authorCount[blog.author] || 0) + 1
+    return authorCount
+  }, {})
+  const maxCount = Math.max(...Object.values(authorCounts))
+  const mostFrequent = Object.keys(authorCounts).filter(
+    (author) => authorCounts[author] === maxCount,
   )
 
-  return { author, blogs: blogsCount }
+  return {
+    author: mostFrequent[0],
+    blogs: maxCount,
+  }
+}
+
+export function mostLikes(blogs) {
+  if (!blogs.length) {
+    return null
+  }
+
+  const authorsByLikes = blogs.reduce((likesCount, blog) => {
+    likesCount[blog.author] = (likesCount[blog.author] || 0) + blog.likes
+    return likesCount
+  }, {})
+  const maxCount = Math.max(...Object.values(authorsByLikes))
+  const mostFrequent = Object.keys(authorsByLikes).filter(
+    (author) => authorsByLikes[author] === maxCount,
+  )
+
+  return {
+    author: mostFrequent[0],
+    likes: maxCount,
+  }
 }

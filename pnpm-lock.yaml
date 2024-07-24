@@ -14,9 +14,6 @@ importers:
       express:
         specifier: ^4.19.2
         version: 4.19.2
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
       mongoose:
         specifier: ^8.5.1
         version: 8.5.1
@@ -194,9 +191,6 @@ packages:
   kareem@2.6.3:
     resolution: {integrity: sha512-C3iHfuGUXK2u8/ipq9LfjFfXFxAZMQJJq7vLS45r3D9Y2xQ/m4S8zaR4zMLFWh9AsNPXmcFfUDhTEO8UIC/V6Q==}
     engines: {node: '>=12.0.0'}
-
-  lodash@4.17.21:
-    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
 
   media-typer@0.3.0:
     resolution: {integrity: sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==}
@@ -602,8 +596,6 @@ snapshots:
   ipaddr.js@1.9.1: {}
 
   kareem@2.6.3: {}
-
-  lodash@4.17.21: {}
 
   media-typer@0.3.0: {}
 
