@@ -3,10 +3,9 @@ import { Blog } from '../models/blog.js'
 
 export const blogsRouter = express.Router()
 
-blogsRouter.get('/', (_req, res) => {
-  Blog.find({}).then((blogs) => {
-    res.json(blogs)
-  })
+blogsRouter.get('/', async (_req, res) => {
+  const blogs = await Blog.find({})
+  res.json(blogs)
 })
 
 blogsRouter.post('/', (req, res) => {

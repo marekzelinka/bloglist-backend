@@ -6,7 +6,7 @@ import {
   mostBlogs,
   mostLikes,
   totalLikes,
-} from './list-helper.js'
+} from '../src/utils/list-helper.js'
 
 describe('dummy', () => {
   test('dummy returns one', () => {
