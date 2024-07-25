@@ -6,5 +6,12 @@ const blogSchema = new mongoose.Schema({
   url: String,
   likes: Number,
 })
+blogSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: (_doc, ret) => {
+    delete ret._id
+  },
+})
 
 export const Blog = mongoose.model('Blog', blogSchema)
