@@ -70,6 +70,7 @@ test('if likes property is missing, it will default to 0', async () => {
 
   const res = await api.post('/api/blogs').send(validBlogObject)
   assert.strictEqual(res.status, 201)
+  assert.match(res.get('Content-Type'), /application\/json/)
   assert.strictEqual(res.body.likes, 0)
 
   const blogsAfter = await Blog.find()
@@ -78,6 +79,19 @@ test('if likes property is missing, it will default to 0', async () => {
     (blog) => typeof blog.likes === 'number',
   )
   assert(everyBlogHasLikes)
+})
+
+test('blog without title or url is not added', async () => {
+  const invvalidBlogObject = {
+    author: 'Robert C. Martin',
+    lieks: 10,
+  }
+
+  const res = await api.post('/api/blogs').send(invvalidBlogObject)
+  assert.strictEqual(res.status, 400)
+
+  const blogsAfter = await Blog.find()
+  assert.strictEqual(blogsAfter.length, initialBlogs.length)
 })
 
 after(async () => {
