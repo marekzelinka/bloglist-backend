@@ -103,6 +103,19 @@ test('deleting a blog with valid id suceeds', async () => {
 
   const blogsAfter = await Blog.find()
   assert.strictEqual(blogsAfter.length, initialBlogs.length - 1)
+  const titles = blogsAfter.map((blog) => blog.title)
+  assert(!titles.includes(blogToDelete.title))
+})
+
+test('updating a blog with valid id suceeds', async () => {
+  const blogsBefore = await Blog.find()
+  const blogToUpdate = blogsBefore[0]
+  const blogUpdates = { likes: blogToUpdate.likes + 1 }
+
+  const res = await api.put(`/api/blogs/${blogToUpdate.id}`).send(blogUpdates)
+  assert.strictEqual(res.status, 200)
+  assert.match(res.get('Content-Type'), /application\/json/)
+  assert.strictEqual(res.body.likes, blogUpdates.likes)
 })
 
 after(async () => {

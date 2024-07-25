@@ -14,6 +14,15 @@ blogsRouter.get('/', async (_req, res) => {
   res.json(blogs)
 })
 
+blogsRouter.put('/:id', async (req, res) => {
+  const id = req.params.id
+  const updatedBlog = await Blog.findByIdAndUpdate(id, req.body, {
+    runValidators: true,
+    new: true,
+  })
+  res.json(updatedBlog)
+})
+
 blogsRouter.delete('/:id', async (req, res) => {
   const id = req.params.id
   await Blog.findByIdAndDelete(id)
