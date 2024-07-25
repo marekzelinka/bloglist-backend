@@ -13,3 +13,9 @@ blogsRouter.get('/', async (_req, res) => {
   const blogs = await Blog.find({})
   res.json(blogs)
 })
+
+blogsRouter.delete('/:id', async (req, res) => {
+  const id = req.params.id
+  await Blog.findByIdAndDelete(id)
+  res.status(204).end()
+})
