@@ -56,10 +56,28 @@ test('a valid blog can be added', async () => {
   assert.strictEqual(res.body.title, validBlogObject.title)
 
   const blogsAfter = await Blog.find()
-  console.log({ blogsAfter })
   assert.strictEqual(blogsAfter.length, initialBlogs.length + 1)
   const titles = blogsAfter.map((blog) => blog.title)
   assert(titles.includes(validBlogObject.title))
+})
+
+test('if likes property is missing, it will default to 0', async () => {
+  const validBlogObject = {
+    title: 'First class tests',
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll',
+  }
+
+  const res = await api.post('/api/blogs').send(validBlogObject)
+  assert.strictEqual(res.status, 201)
+  assert.strictEqual(res.body.likes, 0)
+
+  const blogsAfter = await Blog.find()
+  assert.strictEqual(blogsAfter.length, initialBlogs.length + 1)
+  const everyBlogHasLikes = blogsAfter.every(
+    (blog) => typeof blog.likes === 'number',
+  )
+  assert(everyBlogHasLikes)
 })
 
 after(async () => {
