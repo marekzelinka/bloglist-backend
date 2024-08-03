@@ -6,7 +6,11 @@ import { blogsRouter } from './routes/blogs.js'
 import { loginRouter } from './routes/login.js'
 import { usersRouter } from './routes/users.js'
 import { env } from './utils/env.js'
-import { errorHandler, unknownEndpoint } from './utils/middleware.js'
+import {
+  errorHandler,
+  tokenExtractor,
+  unknownEndpoint,
+} from './utils/middleware.js'
 
 export const app = express()
 
@@ -14,6 +18,8 @@ mongoose.connect(env.MONGODB_URI)
 
 app.use(cors())
 app.use(express.json())
+
+app.use(tokenExtractor)
 
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)

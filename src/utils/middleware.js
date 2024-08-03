@@ -26,3 +26,18 @@ export function errorHandler(error, _req, res, next) {
 
   next(error)
 }
+
+export function tokenExtractor(req, _res, next) {
+  const token = getTokenFrom(req)
+  req.token = token ?? ''
+
+  next()
+}
+
+const getTokenFrom = (request) => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
+  }
+  return null
+}

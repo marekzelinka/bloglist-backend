@@ -6,7 +6,7 @@ import { User } from '../models/user.js'
 export const blogsRouter = express.Router()
 
 blogsRouter.post('/', async (req, res) => {
-  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
+  const decodedToken = jwt.verify(req.token, process.env.SECRET)
 
   if (!decodedToken.id) {
     return res.status(401).json({ error: 'token invalid' })
@@ -22,14 +22,6 @@ blogsRouter.post('/', async (req, res) => {
 
   res.status(201).json(savedBlog)
 })
-
-const getTokenFrom = (request) => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.startsWith('Bearer ')) {
-    return authorization.replace('Bearer ', '')
-  }
-  return null
-}
 
 blogsRouter.get('/', async (_req, res) => {
   const blogs = await Blog.find({}).populate('user', { username: 1 })
