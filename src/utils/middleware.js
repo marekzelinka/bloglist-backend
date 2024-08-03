@@ -15,9 +15,7 @@ export function errorHandler(error, _req, res, next) {
     error.name === 'MongoServerError' &&
     error.message.includes('E11000 duplicate key error')
   ) {
-    return response
-      .status(400)
-      .json({ error: 'expected `username` to be unique' })
+    return res.status(400).json({ error: 'expected `username` to be unique' })
   }
 
   next(error)
