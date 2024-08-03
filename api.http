@@ -3,21 +3,25 @@ GET http://localhost:3000/api/blogs
 ###
 POST http://localhost:3000/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im16ZWxpbmthIiwiaWQiOiI2NmFlMWMxZWU1MzQyYjA1MTUwYjUwMjIiLCJpYXQiOjE3MjI3MDkzNzh9.qEqrzBHo42WQF7VGVBIjHT1jhG2exrgqU1QDzd_JVis
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1qYWNrc29uIiwiaWQiOiI2NmFlNzhlM2I2MTVmMjEwMTcyNWQwY2YiLCJpYXQiOjE3MjI3MTAyNTUsImV4cCI6MTcyMjcxMzg1NX0.U6Y6jqgN_p9dp_wxdgvN7-642q8jurxTp5RXsTrmsyk
 
 {
   "title": "Testing token extraction",
-  "author": "Marek Zelinka",
+  "author": "Ryan Florence",
   "url": "https://fullstackopen.com/en/part4/token_authentication"
 }
+
+###
+DELETE http://localhost:3000/api/blogs/66ae790cb615f2101725d0d3
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1qYWNrc29uIiwiaWQiOiI2NmFlNzhlM2I2MTVmMjEwMTcyNWQwY2YiLCJpYXQiOjE3MjI3MTAzMjAsImV4cCI6MTcyMjcxMzkyMH0.6gUJqd5XafAop8Ddhpn9tHhcIYZ8V3p9i7c17P8jkxA
 
 ###
 POST http://localhost:3000/api/users
 Content-Type: application/json
 
 {
-  "username": "mzelinka17",
-  "name": "Marek Zelinka",
+  "username": "mjackson",
   "password": "123456"
 }
 
@@ -29,6 +33,6 @@ POST http://localhost:3000/api/login
 Content-Type: application/json
 
 {
-  "username": "mzelinka",
+  "username": "mjackson",
   "password": "123456"
 }
