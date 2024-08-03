@@ -1,3 +1,5 @@
+import jwt from 'jsonwebtoken'
+import { User } from '../models/user.js'
 import { logError } from './logger.js'
 
 export function unknownEndpoint(_req, res) {
@@ -40,4 +42,17 @@ const getTokenFrom = (request) => {
     return authorization.replace('Bearer ', '')
   }
   return null
+}
+
+export async function userExtractor(req, res, next) {
+  const decodedToken = jwt.verify(req.token, process.env.SECRET)
+
+  if (!decodedToken.id) {
+    return res.status(401).json({ error: 'token invalid' })
+  }
+
+  const user = await User.findById(decodedToken.id)
+  req.user = user
+
+  next()
 }
