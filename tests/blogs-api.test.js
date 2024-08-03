@@ -11,9 +11,21 @@ import { blogsInDb, initialBlogs, usersInDb } from './blog-test-utils.js'
 const api = supertest(app)
 
 describe('when inittialy there are some blogs', () => {
+  const initialUserCredentials = { username: 'root', password: 'sekret' }
+
   beforeEach(async () => {
+    await User.deleteMany()
+    const passwordHash = await bcrypt.hash(initialUserCredentials.password, 10)
+    const user = new User({
+      username: initialUserCredentials.username,
+      passwordHash,
+    })
+    await user.save()
+
     await Blog.deleteMany()
-    await Blog.insertMany(initialBlogs)
+    for (const blog of initialBlogs) {
+      await new Blog({ ...blog, user: user.id }).save()
+    }
   })
 
   test('returns the correct amount of blog posts in the JSON format', async () => {
@@ -32,6 +44,11 @@ describe('when inittialy there are some blogs', () => {
   describe('addition of a new blog', () => {
     describe('suceeds with status code of 201 when', () => {
       test('data is valid', async () => {
+        const loginRes = await api
+          .post('/api/login')
+          .send(initialUserCredentials)
+        const token = loginRes.body.token
+
         const validBlogObject = {
           title: 'First class tests',
           author: 'Robert C. Martin',
@@ -39,7 +56,10 @@ describe('when inittialy there are some blogs', () => {
           likes: 10,
         }
 
-        const res = await api.post('/api/blogs').send(validBlogObject)
+        const res = await api
+          .post('/api/blogs')
+          .send(validBlogObject)
+          .set('Authorization', `Bearer ${token}`)
         assert.strictEqual(res.status, 201)
         assert.match(res.get('Content-Type'), /application\/json/)
         // On acciedent I've called `await api.post('/api/blogs', obj)
@@ -53,13 +73,21 @@ describe('when inittialy there are some blogs', () => {
       })
 
       test('data is still valid, but the likes property is missing, it will default to 0', async () => {
+        const loginRes = await api
+          .post('/api/login')
+          .send(initialUserCredentials)
+        const token = loginRes.body.token
+
         const validBlogObject = {
           title: 'First class tests',
           author: 'Robert C. Martin',
           url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll',
         }
 
-        const res = await api.post('/api/blogs').send(validBlogObject)
+        const res = await api
+          .post('/api/blogs')
+          .send(validBlogObject)
+          .set('Authorization', `Bearer ${token}`)
         assert.strictEqual(res.status, 201)
         assert.match(res.get('Content-Type'), /application\/json/)
         assert.strictEqual(res.body.likes, 0)
@@ -74,24 +102,36 @@ describe('when inittialy there are some blogs', () => {
     })
 
     test('fails with status code of 400 if title or url is missing', async () => {
+      const loginRes = await api.post('/api/login').send(initialUserCredentials)
+      const token = loginRes.body.token
+
       const invvalidBlogObject = {
         author: 'Robert C. Martin',
         lieks: 10,
       }
 
-      const res = await api.post('/api/blogs').send(invvalidBlogObject)
+      const res = await api
+        .post('/api/blogs')
+        .send(invvalidBlogObject)
+        .set('Authorization', `Bearer ${token}`)
       assert.strictEqual(res.status, 400)
 
       const blogsAfter = await blogsInDb()
       assert.strictEqual(blogsAfter.length, initialBlogs.length)
     })
   })
+
   describe('deletion of a blog', () => {
     test('suceeds with status code of 204 if id is valid', async () => {
+      const loginRes = await api.post('/api/login').send(initialUserCredentials)
+      const token = loginRes.body.token
+
       const blogsBefore = await Blog.find()
       const blogToDelete = blogsBefore[0]
 
-      const res = await api.delete(`/api/blogs/${blogToDelete.id}`)
+      const res = await api
+        .delete(`/api/blogs/${blogToDelete.id}`)
+        .set('Authorization', `Bearer ${token}`)
       assert.strictEqual(res.status, 204)
 
       const blogsAfter = await blogsInDb()
@@ -118,7 +158,7 @@ describe('when inittialy there are some blogs', () => {
 
   describe('when there is initially one user in db', () => {
     beforeEach(async () => {
-      await User.deleteMany({})
+      await User.deleteMany()
 
       const passwordHash = await bcrypt.hash('sekret', 10)
       const user = new User({ username: 'root', passwordHash })
