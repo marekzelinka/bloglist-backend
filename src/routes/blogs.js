@@ -20,8 +20,7 @@ blogsRouter.get('/', async (_req, res) => {
 })
 
 blogsRouter.put('/:id', async (req, res) => {
-  const id = req.params.id
-  const updatedBlog = await Blog.findByIdAndUpdate(id, req.body, {
+  const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, req.body, {
     runValidators: true,
     new: true,
   })

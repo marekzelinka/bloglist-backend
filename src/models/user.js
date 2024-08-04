@@ -17,10 +17,10 @@ const userSchema = new mongoose.Schema({
   ],
 })
 userSchema.set('toJSON', {
-  virtuals: true,
-  versionKey: false,
   transform: (_doc, ret) => {
+    ret.id = ret._id.toString()
     delete ret._id
+    delete ret.__v
 
     // the passwordHash should not be revealed
     delete ret.passwordHash
